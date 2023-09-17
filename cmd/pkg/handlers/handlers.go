@@ -3,15 +3,40 @@ package handlers
 import (
 	"net/http"
 
+	"github.com/pratik25sharma/firstApi/cmd/pkg/config"
+	"github.com/pratik25sharma/firstApi/cmd/pkg/models"
 	"github.com/pratik25sharma/firstApi/cmd/pkg/renders"
 )
 
+var Repo *Repository
+
+type Repository struct {
+	App *config.AppConfig
+}
+
+// TemplateDate holds data set from the handlers to the template
+
+func NewRepo(a *config.AppConfig) *Repository {
+	return &Repository{
+		App: a,
+	}
+}
+
+func NewHandlers(r *Repository) {
+	Repo = r
+}
+
 // Home is the home page handler
-func Home(w http.ResponseWriter, r *http.Request) {
-	renders.RenderTemplate(w, "home.page.tmpl")
+func (m *Repository) Home(w http.ResponseWriter, r *http.Request) {
+	renders.RenderTemplate(w, "home.page.tmpl", &models.TemplateDate{})
 }
 
 // About is the about page handler
-func About(w http.ResponseWriter, r *http.Request) {
-	renders.RenderTemplate(w, "about.page.tmpl")
+func (m *Repository) About(w http.ResponseWriter, r *http.Request) {
+	stringMap := make(map[string]string)
+	stringMap["test"] = "hello Pratik"
+
+	renders.RenderTemplate(w, "about.page.tmpl", &models.TemplateDate{
+		StringMap: stringMap,
+	})
 }
