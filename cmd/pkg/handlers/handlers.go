@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/pratik25sharma/firstApi/cmd/pkg/config"
@@ -28,6 +29,8 @@ func NewHandlers(r *Repository) {
 
 // Home is the home page handler
 func (m *Repository) Home(w http.ResponseWriter, r *http.Request) {
+	remoteIp := r.RemoteAddr
+	m.App.Session.Put(r.Context(), "remoteIp", remoteIp)
 	renders.RenderTemplate(w, "home.page.tmpl", &models.TemplateDate{})
 }
 
@@ -35,6 +38,12 @@ func (m *Repository) Home(w http.ResponseWriter, r *http.Request) {
 func (m *Repository) About(w http.ResponseWriter, r *http.Request) {
 	stringMap := make(map[string]string)
 	stringMap["test"] = "hello Pratik"
+
+	fmt.Println("Hit the controller")
+
+	remoteIp := m.App.Session.GetString(r.Context(), "remoteIp")
+
+	stringMap["remoteIp"] = remoteIp
 
 	renders.RenderTemplate(w, "about.page.tmpl", &models.TemplateDate{
 		StringMap: stringMap,
